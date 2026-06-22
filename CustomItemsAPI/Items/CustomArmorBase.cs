@@ -1,6 +1,7 @@
 ﻿using CustomItemsAPI.Extensions;
 using InventorySystem.Items.Armor;
 using LabApi.Features.Wrappers;
+using LabApiExtensions.Extensions;
 using PlayerStatsSystem;
 using System.ComponentModel;
 
@@ -77,9 +78,9 @@ public abstract class CustomArmorBase : CustomItemBase
     /// <param name="attacker">Damage dealer.</param>
     /// <param name="damageHandler">Damage Handler.</param>
     /// /// <param name="isAllowed">Whether or not the action is allowed to perform.</param>
-    public virtual void OnTakingDamage(Player reciever, Player attacker, FirearmDamageHandler damageHandler, TypeWrapper<bool> isAllowed)
+    public virtual void OnTakingDamage(Player reciever, Player attacker, DamageHandlerBase damageHandler, TypeWrapper<bool> isAllowed)
     {
-        CL.Debug($"OnTakingDamage {reciever.DisplayName} from {attacker.DisplayName} dealing {damageHandler.Damage} damage", Main.Instance.Config.Debug);
+        CL.Debug($"OnTakingDamage {reciever.DisplayName} from {attacker.DisplayName} dealing {damageHandler.GetDamageValue()} damage", Main.Instance.Config.Debug);
     }
 
     /// <summary>

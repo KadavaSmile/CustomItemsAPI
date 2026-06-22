@@ -19,6 +19,18 @@ internal sealed class DamageHandler : CustomEventsHandler
             return;
         if (ev.Attacker == ev.Player)
             return;
+
+        if (ev.Player.Inventory.TryGetBodyArmor(out BodyArmor equipedArmor))
+        {
+            if (CustomItems.TryGetCustomItem(item: Item.Get(equipedArmor), out CustomArmorBase cur_armor))
+            {
+                TypeWrapper<bool> isAllowedHelper = new(ev.IsAllowed);
+                CustomItemEvents.OnTakingDamage(cur_armor, ev.Player, ev.Attacker, ev.DamageHandler, isAllowedHelper);
+                cur_armor.OnTakingDamage(ev.Player, ev.Attacker, ev.DamageHandler, isAllowedHelper);
+                ev.IsAllowed = isAllowedHelper.Value;
+            }
+        }
+
         if (ev.DamageHandler is not FirearmDamageHandler firearmDamageHandler)
             return;
         if (firearmDamageHandler == null)
@@ -31,17 +43,6 @@ internal sealed class DamageHandler : CustomEventsHandler
             TypeWrapper<bool> isAllowedHelper = new(ev.IsAllowed);
             CustomFirearmEvents.OnHurting(cur_item, ev.Player, ev.Attacker, firearmDamageHandler, isAllowedHelper);
             cur_item.OnHurting(ev.Player, ev.Attacker, firearmDamageHandler, isAllowedHelper);
-            ev.IsAllowed = isAllowedHelper.Value;
-        }
-
-        if (!ev.Player.Inventory.TryGetBodyArmor(out BodyArmor equipedArmor))
-            return;
-
-        if (CustomItems.TryGetCustomItem(item: Item.Get(equipedArmor), out CustomArmorBase cur_armor))
-        {
-            TypeWrapper<bool> isAllowedHelper = new(ev.IsAllowed);
-            CustomItemEvents.OnTakingDamage(cur_armor, ev.Player, ev.Attacker, ev.DamageHandler, isAllowedHelper);
-            cur_armor.OnTakingDamage(ev.Player, ev.Attacker, firearmDamageHandler, isAllowedHelper);
             ev.IsAllowed = isAllowedHelper.Value;
         }
     }
